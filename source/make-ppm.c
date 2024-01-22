@@ -9,6 +9,8 @@ int main() {
     printf("%d\n", 255);
 
     for (int j = 0; j < image_height; j++) {
+        fprintf(stderr, "\rProgress: line %d/%d", j, image_height);
+        fflush(stderr);
         for (int i = 0; i < image_width; i++) {
             double r = (double) i / image_width;
             double g = (double) j / image_height;
@@ -17,4 +19,5 @@ int main() {
         }
         printf("\n");
     }
+    fprintf(stderr, "\n");
 }
