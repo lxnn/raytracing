@@ -18,14 +18,15 @@ typedef struct Sphere Sphere;
 struct Sphere { V3 center; double radius; };
 
 double hit_sphere(Ray r, Sphere s) {
+    V3 co = v3_sub(r.origin, s.center);
     double a = v3_sqnorm(r.direction);
-    double b = 2 * v3_dot(r.direction, v3_sub(r.origin, s.center));
-    double c = v3_sqnorm(v3_sub(r.origin, s.center)) - s.radius * s.radius;
-    double discriminant = b*b - 4*a*c;
+    double half_b = v3_dot(r.direction, co);
+    double c = v3_sqnorm(co) - s.radius*s.radius;
+    double discriminant = half_b*half_b - a*c;
     if (discriminant < 0)
         return -1;
     else
-        return (-b - sqrt(discriminant)) / (2*a);
+        return (-half_b - sqrt(discriminant)) / a;
 }
 
 RGB ray_color(Ray r) {
