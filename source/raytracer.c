@@ -1,6 +1,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "vector.h"
 #include "ppm.h"
@@ -12,10 +13,27 @@ V3 ray_at(Ray r, double t) {
     return v3_add(r.origin, v3_scale(r.direction, t));
 }
 
+typedef struct Sphere Sphere;
+struct Sphere { V3 center; double radius; };
+
+bool hits_sphere(Ray r, Sphere s) {
+    double a = v3_sqnorm(r.direction);
+    double b = 2 * v3_dot(r.direction, v3_sub(r.origin, s.center));
+    double c = v3_sqnorm(v3_sub(r.origin, s.center)) - s.radius * s.radius;
+    double discriminant = b*b - 4*a*c;
+    return discriminant >= 0;
+}
+
 RGB ray_color(Ray r) {
-    double t = 0.5 * v3_unit(r.direction).y + 0.5;
-    RGB light_blue = {0.5, 0.7, 1.0};
-    return rgb_blend(WHITE, light_blue, t);
+    static const Sphere s = {.center={0, 0, -1}, .radius=0.5};
+    if (hits_sphere(r, s)) {
+        return (RGB) {1, 0, 0};
+    }
+    else {
+        double t = 0.5 * v3_unit(r.direction).y + 0.5;
+        RGB light_blue = {0.5, 0.7, 1.0};
+        return rgb_blend(WHITE, light_blue, t);
+    }
 }
 
 int main() {
