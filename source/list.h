@@ -1,5 +1,5 @@
-#ifndef SPHERE_H
-#define SPHERE_H
+#ifndef LIST_H
+#define LIST_H
 
 #include "hittable.h"
 
@@ -17,4 +17,4 @@ void list_init(List *self, size_t capacity);
 void list_destroy(List *self);
 void list_append(List *self, Hittable *hittable);
 
-#endif // SPHERE_H
+#endif // LIST_H
