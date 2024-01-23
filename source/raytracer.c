@@ -6,13 +6,8 @@
 
 #include "vector.h"
 #include "ppm.h"
+#include "ray.h"
 
-typedef struct Ray Ray;
-struct Ray { V3 origin; V3 direction; };
-
-V3 ray_at(Ray r, double t) {
-    return v3_add(r.origin, v3_scale(r.direction, t));
-}
 
 typedef struct Sphere Sphere;
 struct Sphere { V3 center; double radius; };
