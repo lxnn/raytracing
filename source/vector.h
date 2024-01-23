@@ -8,6 +8,7 @@ V3 v3_add(V3 a, V3 b);
 V3 v3_sub(V3 a, V3 b);
 V3 v3_mul(V3 a, V3 b);
 V3 v3_scale(V3 a, double s);
+V3 v3_neg(V3 a);
 double v3_sum(V3 a);
 double v3_dot(V3 a, V3 b);
 double v3_sqnorm(V3 a);
@@ -18,5 +19,6 @@ void v3_iadd(V3 *a, V3 b);
 void v3_isub(V3 *a, V3 b);
 void v3_imul(V3 *a, V3 b);
 void v3_iscale(V3 *a, double s);
+void v3_ineg(V3 *a);
 
 #endif // VECTOR_H

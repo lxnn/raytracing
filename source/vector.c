@@ -5,6 +5,7 @@ V3 v3_add(V3 a, V3 b) { return (V3){a.x+b.x, a.y+b.y, a.z+b.z}; }
 V3 v3_sub(V3 a, V3 b) { return (V3){a.x-b.x, a.y-b.y, a.z-b.z}; }
 V3 v3_mul(V3 a, V3 b) { return (V3){a.x*b.x, a.y*b.y, a.z*b.z}; }
 V3 v3_scale(V3 a, double s) { return (V3){a.x*s, a.y*s, a.z*s}; }
+V3 v3_neg(V3 a) { return (V3){-a.x, -a.y, -a.z}; }
 double v3_sum(V3 a) { return a.x + a.y + a.z; }
 double v3_dot(V3 a, V3 b) { return v3_sum(v3_mul(a, b)); }
 double v3_sqnorm(V3 a) { return v3_dot(a, a); }
@@ -17,3 +18,4 @@ void v3_iadd(V3 *a, V3 b) { a->x += b.x; a->y += b.y; a->z += b.z; }
 void v3_isub(V3 *a, V3 b) { a->x -= b.x; a->y -= b.y; a->z -= b.z;}
 void v3_imul(V3 *a, V3 b) { a->x *= b.x; a->y *= b.y; a->z *= b.z;}
 void v3_iscale(V3 *a, double s) { a->x *= s; a->y *= s; a->z *= s; }
+void v3_ineg(V3 *a) { a->x *= -1; a->y *= -1, a->z *= -1; }
