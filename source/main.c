@@ -7,28 +7,15 @@
 #include "vector.h"
 #include "ppm.h"
 #include "ray.h"
+#include "hittable.h"
+#include "sphere.h"
 
-
-typedef struct Sphere Sphere;
-struct Sphere { V3 center; double radius; };
-
-double hit_sphere(Ray r, Sphere s) {
-    V3 co = v3_sub(r.origin, s.center);
-    double a = v3_sqnorm(r.direction);
-    double half_b = v3_dot(r.direction, co);
-    double c = v3_sqnorm(co) - s.radius*s.radius;
-    double discriminant = half_b*half_b - a*c;
-    if (discriminant < 0)
-        return -1;
-    else
-        return (-half_b - sqrt(discriminant)) / a;
-}
 
 RGB ray_color(Ray r) {
-    static const Sphere s = {.center={0, 0, -1}, .radius=0.5};
-    double t = hit_sphere(r, s);
-    if (t > 0.0) {
-        V3 n = v3_unit(v3_sub(ray_at(r, t), s.center));
+    static const Sphere s = {.hit=sphere_hit, .center={0, 0, -1}, .radius=0.5};
+    Hit hit_record;
+    if (s.hit((Hittable *) &s, r, 0, INFINITY, &hit_record)) {
+        V3 n = v3_unit(v3_sub(ray_at(r, hit_record.time), s.center));
         return (RGB) {0.5*(n.x + 1), 0.5*(n.y + 1), 0.5*(n.z + 1)};
     }
     else {
