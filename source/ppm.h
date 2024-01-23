@@ -1,9 +1,10 @@
 #ifndef PPM_H
 #define PPM_H
 
-#include "rgb.h"
 #include <stdio.h>
+#include "rgb.h"
+#include "image.h"
 
-void write_ppm(FILE *file, RGB *data, size_t height, size_t width);
+void write_ppm(FILE *file, Image *image);
 
 #endif // PPM_H
