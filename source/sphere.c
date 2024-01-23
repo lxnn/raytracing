@@ -22,10 +22,12 @@ bool sphere_hit(Hittable *self, Ray r, double tmin, double tmax, Hit *record) {
 
     record->time = root;
     record->point = ray_at(r, root);
-    record->normal = v3_scale(
+    V3 front_normal = v3_scale(
         v3_sub(record->point, s->center),
         1 / s->radius
     );
+    record->front_face = v3_dot(r.direction, front_normal) < 0;
+    record->normal = record->front_face? front_normal : v3_neg(front_normal);
 
     return true;
 }
