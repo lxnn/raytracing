@@ -4,7 +4,7 @@
 #include <math.h>
 #include "ray.h"
 
-bool sphere_hit(Hittable *self, Ray r, double tmin, double tmax, Hit *record) {
+bool sphere_hit(Hittable *self, Ray r, Interval in, Hit *record) {
     Sphere *s = (Sphere *) self;
     V3 co = v3_sub(r.origin, s->center);
     double a = v3_sqnorm(r.direction);
@@ -17,8 +17,8 @@ bool sphere_hit(Hittable *self, Ray r, double tmin, double tmax, Hit *record) {
     double sqrtd = sqrt(discriminant);
 
     double root = (-half_b - sqrtd) / a;
-    if (root < tmin || root > tmax) root = (-half_b + sqrtd) / a;
-    if (root < tmin || root > tmax) return false;
+    if (!interval_surrounds(in, root)) root = (-half_b + sqrtd) / a;
+    if (!interval_surrounds(in, root)) return false;
 
     record->time = root;
     record->point = ray_at(r, root);

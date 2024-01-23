@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "vector.h"
 #include "ray.h"
+#include "interval.h"
 
 typedef struct Hit Hit;
 struct Hit {
@@ -15,7 +16,7 @@ struct Hit {
 
 typedef struct Hittable Hittable;
 struct Hittable {
-    bool (*hit)(Hittable *self, Ray r, double tmin, double tmax, Hit *record);
+    bool (*hit)(Hittable *self, Ray r, Interval in, Hit *record);
 };
 
 #endif // HITTABLE_H

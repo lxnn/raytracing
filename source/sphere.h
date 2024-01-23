@@ -3,6 +3,7 @@
 
 #include "hittable.h"
 #include "vector.h"
+#include "interval.h"
 
 typedef struct Sphere Sphere;
 struct Sphere {
@@ -11,6 +12,6 @@ struct Sphere {
     double radius;
 };
 
-bool sphere_hit(Hittable *self, Ray r, double tmin, double tmax, Hit *record);
+bool sphere_hit(Hittable *self, Ray r, Interval in, Hit *record);
 
 #endif // SPHERE_H

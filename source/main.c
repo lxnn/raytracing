@@ -14,7 +14,7 @@
 
 RGB ray_color(Ray ray, Hittable *world) {
     Hit record;
-    if (world->hit(world, ray, 0, INFINITY, &record)) {
+    if (world->hit(world, ray, (Interval) {0, INFINITY}, &record)) {
         return (RGB) {
             0.5*(record.normal.x + 1),
             0.5*(record.normal.y + 1),

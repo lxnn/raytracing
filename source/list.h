@@ -2,6 +2,7 @@
 #define LIST_H
 
 #include "hittable.h"
+#include "interval.h"
 
 typedef struct List List;
 
@@ -11,6 +12,6 @@ struct List {
     size_t count;
 };
 
-bool list_hit(Hittable *self, Ray r, double tmin, double tmax, Hit *record);
+bool list_hit(Hittable *self, Ray r, Interval in, Hit *record);
 
 #endif // LIST_H
