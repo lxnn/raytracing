@@ -7,8 +7,8 @@ typedef struct List List;
 
 struct List {
     struct Hittable;
-    Hittable **elements;
-    size_t length;
+    Hittable **objects;
+    size_t count;
 };
 
 bool list_hit(Hittable *self, Ray r, double tmin, double tmax, Hit *record);
