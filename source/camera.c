@@ -20,25 +20,43 @@ static RGB ray_color(Ray ray, Hittable *world) {
     }
 }
 
+static void init(Camera *camera) {
+    camera->priv.aspect_ratio = (double) camera->image_width / camera->image_height;
+    camera->priv.viewport_width = camera->viewport_height * camera->priv.aspect_ratio;
+
+    camera->priv.viewport_u = (V3) {camera->priv.viewport_width, 0, 0};
+    camera->priv.viewport_v = (V3) {0, -camera->viewport_height, 0};
+
+    camera->priv.pixel_du = v3_scale(camera->priv.viewport_u, 1.0 / camera->image_width);
+    camera->priv.pixel_dv = v3_scale(camera->priv.viewport_v, 1.0 / camera->image_height);
+
+    camera->priv.viewport_center = v3_add(camera->center, (V3) {0, 0, -camera->focal_length});
+    camera->priv.viewport_upper_left = v3_sub(
+        camera->priv.viewport_center,
+        v3_scale(v3_add(camera->priv.viewport_u, camera->priv.viewport_v), 0.5)
+    );
+    camera->priv.pixel_zero = v3_add(
+        camera->priv.viewport_upper_left,
+        v3_scale(v3_add(camera->priv.pixel_du, camera->priv.pixel_dv), 0.5)
+    );
+
+    camera->priv.is_init = true;
+}
+
+static Ray get_ray(Camera *camera, size_t i, size_t j) {
+    V3 pixel_offset = v3_add(
+        v3_scale(camera->priv.pixel_du, (double) j),
+        v3_scale(camera->priv.pixel_dv, (double) i)
+    );
+    V3 pixel_center = v3_add(camera->priv.pixel_zero, pixel_offset);
+    return (Ray) {
+        .origin = camera->center,
+        .direction = v3_sub(pixel_center, camera->center),
+    };
+}
+
 Image *camera_render(Camera *camera, Hittable *world) {
-    double aspect_ratio = (double) camera->image_width / camera->image_height;
-    double viewport_width = camera->viewport_height * aspect_ratio;
-
-    V3 viewport_u = (V3) {viewport_width, 0, 0};
-    V3 viewport_v = (V3) {0, -camera->viewport_height, 0};
-
-    V3 pixel_du = v3_scale(viewport_u, 1.0 / camera->image_width);
-    V3 pixel_dv = v3_scale(viewport_v, 1.0 / camera->image_height);
-
-    V3 viewport_center = v3_add(camera->center, (V3) {0, 0, -camera->focal_length});
-    V3 viewport_upper_left = v3_sub(
-        viewport_center,
-        v3_scale(v3_add(viewport_u, viewport_v), 0.5)
-    );
-    V3 pixel_zero = v3_add(
-        viewport_upper_left,
-        v3_scale(v3_add(pixel_du, pixel_dv), 0.5)
-    );
+    if (camera->priv.is_init != true) init(camera);
 
     Image *image = malloc(sizeof(Image));
     image->height = camera->image_height;
@@ -49,15 +67,7 @@ Image *camera_render(Camera *camera, Hittable *world) {
         fprintf(stderr, "\rProgress: %d%%", (int) (100.0 * i / image->height));
         fflush(stderr);
         for (size_t j = 0; j < image->width; j++) {
-            V3 pixel_offset = v3_add(
-                v3_scale(pixel_du, (double) j),
-                v3_scale(pixel_dv, (double) i)
-            );
-            V3 pixel_center = v3_add(pixel_zero, pixel_offset);
-            Ray ray = (Ray) {
-                .origin = camera->center,
-                .direction = v3_sub(pixel_center, camera->center),
-            };
+            Ray ray = get_ray(camera, i, j);
             image->pixels[i * image->width + j] = ray_color(ray, world);
         }
     }
