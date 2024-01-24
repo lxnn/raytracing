@@ -12,6 +12,7 @@ struct Camera {
     V3 center;
     double focal_length;
     double viewport_height;
+    size_t samples_per_pixel;
 
     struct {
         bool is_init;

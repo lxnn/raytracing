@@ -43,15 +43,27 @@ static void init(Camera *camera) {
     camera->priv.is_init = true;
 }
 
+static double random() {
+    return rand() / (RAND_MAX + 1.0);
+}
+
 static Ray get_ray(Camera *camera, size_t i, size_t j) {
-    V3 pixel_offset = v3_add(
+    V3 pixel_corner_offset = v3_add(
         v3_scale(camera->priv.pixel_du, (double) j),
         v3_scale(camera->priv.pixel_dv, (double) i)
     );
-    V3 pixel_center = v3_add(camera->priv.pixel_zero, pixel_offset);
+    V3 random_offset = v3_add(
+        v3_scale(camera->priv.pixel_du, random()),
+        v3_scale(camera->priv.pixel_dv, random())
+    );
+    V3 pixel_sample = v3_add3(
+        camera->priv.pixel_zero,
+        pixel_corner_offset,
+        random_offset
+    );
     return (Ray) {
         .origin = camera->center,
-        .direction = v3_sub(pixel_center, camera->center),
+        .direction = v3_sub(pixel_sample, camera->center),
     };
 }
 
@@ -63,12 +75,17 @@ Image *camera_render(Camera *camera, Hittable *world) {
     image->width = camera->image_width;
     image->pixels = calloc(image->height * image->width, sizeof(RGB));
 
+    RGB *samples = calloc(camera->samples_per_pixel, sizeof(RGB));
+
     for (size_t i = 0; i < image->height; i++) {
         fprintf(stderr, "\rProgress: %d%%", (int) (100.0 * i / image->height));
         fflush(stderr);
         for (size_t j = 0; j < image->width; j++) {
-            Ray ray = get_ray(camera, i, j);
-            image->pixels[i * image->width + j] = ray_color(ray, world);
+            for (size_t k = 0; k < camera->samples_per_pixel; k++) {
+                Ray ray = get_ray(camera, i, j);
+                samples[k] = ray_color(ray, world);
+            }
+            image->pixels[i * image->width + j] = rgb_average(samples, camera->samples_per_pixel);
         }
     }
 

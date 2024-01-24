@@ -31,6 +31,7 @@ int main() {
         .center = (V3) {0, 0, 0},
         .focal_length = 1.0,
         .viewport_height = 2.0,
+        .samples_per_pixel = 100,
     };
 
     Image *image = camera_render(&camera, world);

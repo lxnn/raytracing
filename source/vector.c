@@ -2,6 +2,8 @@
 #include <math.h>
 
 V3 v3_add(V3 a, V3 b) { return (V3){a.x+b.x, a.y+b.y, a.z+b.z}; }
+V3 v3_add3(V3 a, V3 b, V3 c) { return (V3){a.x+b.x+c.x, a.y+b.y+c.y, a.z+b.z+c.z}; }
+V3 v3_add4(V3 a, V3 b, V3 c, V3 d) { return (V3){a.x+b.x+c.x+d.x, a.y+b.y+c.y+d.y, a.z+b.z+c.z+d.z}; }
 V3 v3_sub(V3 a, V3 b) { return (V3){a.x-b.x, a.y-b.y, a.z-b.z}; }
 V3 v3_mul(V3 a, V3 b) { return (V3){a.x*b.x, a.y*b.y, a.z*b.z}; }
 V3 v3_scale(V3 a, double s) { return (V3){a.x*s, a.y*s, a.z*s}; }

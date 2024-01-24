@@ -10,3 +10,13 @@ RGB rgb_blend(RGB a, RGB b, double t) {
         (1-t) * a.b + t * b.b,
     };
 }
+
+RGB rgb_average(RGB *samples, size_t n) {
+    RGB sum = (RGB) {0, 0, 0};
+    for (size_t i = 0; i < n; i++) {
+        sum.r += samples[i].r;
+        sum.g += samples[i].g;
+        sum.b += samples[i].b;
+    }
+    return (RGB) {sum.r / n, sum.g / n, sum.b / n};
+}

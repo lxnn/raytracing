@@ -8,5 +8,6 @@ extern const RGB BLACK;
 extern const RGB WHITE;
 
 RGB rgb_blend(RGB a, RGB b, double t);
+RGB rgb_average(RGB *samples, size_t n);
 
 #endif // RGB_H
