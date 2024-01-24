@@ -15,8 +15,8 @@ void write_ppm(FILE *file, Image *image) {
     fprintf(file, "P3\n%zu %zu\n255\n", image->width, image->height);
     for (size_t i = 0; i < image->height; i++) {
         for (size_t j = 0; j < image->width; j++) {
-            RGB pixel = image->pixels[i * image->width + j];
-            fprintf(file, "%d %d %d ", convert(pixel.r), convert(pixel.g), convert(pixel.b));
+            RGB color = rgb_linear_to_gamma(image->pixels[i * image->width + j]);
+            fprintf(file, "%d %d %d ", convert(color.r), convert(color.g), convert(color.b));
         }
         fprintf(file, "\n");
     }

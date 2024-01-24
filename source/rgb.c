@@ -1,5 +1,7 @@
 #include "rgb.h"
 
+#include <math.h>
+
 const RGB BLACK = { 0.0, 0.0, 0.0 };
 const RGB WHITE = { 1.0, 1.0, 1.0 };
 
@@ -31,4 +33,8 @@ bool rgb_valid(RGB rgb) {
         &&  rgb.g >= 0 && rgb.g <= 1
         &&  rgb.b >= 0 && rgb.b <= 1
     );
+}
+
+RGB rgb_linear_to_gamma(RGB rgb) {
+    return (RGB) {sqrt(rgb.r), sqrt(rgb.g), sqrt(rgb.b)};
 }
