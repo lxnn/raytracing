@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 #define TAU 6.283185307179586476
 
@@ -34,7 +35,7 @@ static double random() {
 }
 
 static double random_normal() {
-    return sqrt(-2.0 * log(random())) * cos(TAU * random());
+    return sqrt(-2.0 * log(1 - random())) * cos(TAU * random());
 }
 
 static V3 random_normal_3d() {
@@ -54,6 +55,7 @@ static RGB ray_color(Ray ray, Hittable *world) {
     Hit record;
     if (world->hit(world, ray, (Interval) {0, INFINITY}, &record)) {
         V3 direction = random_on_hemisphere(record.normal);
+        assert(v3_sqnorm(direction) > 0.0);
         RGB reflection = ray_color(
             (Ray) {.origin=record.point, direction=direction},
             world
@@ -103,7 +105,14 @@ Image *camera_render(Camera *camera, Hittable *world) {
         for (size_t j = 0; j < image->width; j++) {
             for (size_t k = 0; k < camera->samples_per_pixel; k++) {
                 Ray ray = get_ray(camera, i, j);
-                samples[k] = ray_color(ray, world);
+                RGB sample = ray_color(ray, world);
+                if (!rgb_valid(sample)) {
+                    fprintf(
+                        stderr, "\nInvalid sample: r=%f g=%f b=%f\n", sample.r, sample.g, sample.b
+                    );
+                    assert(false);
+                }
+                samples[k] = sample;
             }
             image->pixels[i * image->width + j] = rgb_average(samples, camera->samples_per_pixel);
         }

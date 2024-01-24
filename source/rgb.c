@@ -24,3 +24,11 @@ RGB rgb_average(RGB *samples, size_t n) {
 RGB rgb_scale(RGB rgb, double s) {
     return (RGB) {rgb.r*s, rgb.g*s, rgb.b*s};
 }
+
+bool rgb_valid(RGB rgb) {
+    return (
+            rgb.r >= 0 && rgb.r <= 1
+        &&  rgb.g >= 0 && rgb.g <= 1
+        &&  rgb.b >= 0 && rgb.b <= 1
+    );
+}

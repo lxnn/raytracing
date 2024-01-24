@@ -1,8 +1,10 @@
 #include "ppm.h"
 
-#include <stdio.h>
+#include <math.h>
+#include <assert.h>
 
 static int convert(double intensity) {
+    assert(!isnan(intensity));
     int int_intensity = (int) (intensity * 255);
     if (int_intensity > 255) return 255;
     if (int_intensity < 0) return 0;
