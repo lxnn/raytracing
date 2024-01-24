@@ -57,7 +57,7 @@ static RGB ray_color(Ray ray, Hittable *world, size_t max_bounces) {
         return (RGB) {0, 0, 0};
     }
     else if (world->hit(world, ray, (Interval) {0.001, INFINITY}, &record)) {
-        V3 new_direction = random_on_hemisphere(record.normal);
+        V3 new_direction = v3_add(record.normal, random_on_unit_sphere());
         assert(v3_sqnorm(new_direction) > 0.0);
         Ray reflected_ray = (Ray) {.origin=record.point, .direction=new_direction};
         RGB color = ray_color(reflected_ray, world, max_bounces - 1);
