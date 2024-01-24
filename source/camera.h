@@ -13,6 +13,7 @@ struct Camera {
     double focal_length;
     double viewport_height;
     size_t samples_per_pixel;
+    size_t max_bounces;
 
     struct {
         bool is_init;

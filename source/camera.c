@@ -51,16 +51,17 @@ static V3 random_on_hemisphere(V3 normal) {
     return v3_dot(on_unit_sphere, normal) > 0 ? on_unit_sphere : v3_neg(on_unit_sphere);
 }
 
-static RGB ray_color(Ray ray, Hittable *world) {
+static RGB ray_color(Ray ray, Hittable *world, size_t max_bounces) {
     Hit record;
-    if (world->hit(world, ray, (Interval) {0, INFINITY}, &record)) {
-        V3 direction = random_on_hemisphere(record.normal);
-        assert(v3_sqnorm(direction) > 0.0);
-        RGB reflection = ray_color(
-            (Ray) {.origin=record.point, direction=direction},
-            world
-        );
-        return rgb_scale(reflection, 0.5);
+    if (max_bounces == 0) {
+        return (RGB) {0, 0, 0};
+    }
+    else if (world->hit(world, ray, (Interval) {0, INFINITY}, &record)) {
+        V3 new_direction = random_on_hemisphere(record.normal);
+        assert(v3_sqnorm(new_direction) > 0.0);
+        Ray reflected_ray = (Ray) {.origin=record.point, .direction=new_direction};
+        RGB color = ray_color(reflected_ray, world, max_bounces - 1);
+        return rgb_scale(color, 0.5);
     }
     else {
         double a = 0.5 * v3_unit(ray.direction).y + 0.5;
@@ -105,7 +106,7 @@ Image *camera_render(Camera *camera, Hittable *world) {
         for (size_t j = 0; j < image->width; j++) {
             for (size_t k = 0; k < camera->samples_per_pixel; k++) {
                 Ray ray = get_ray(camera, i, j);
-                RGB sample = ray_color(ray, world);
+                RGB sample = ray_color(ray, world, camera->max_bounces);
                 if (!rgb_valid(sample)) {
                     fprintf(
                         stderr, "\nInvalid sample: r=%f g=%f b=%f\n", sample.r, sample.g, sample.b
