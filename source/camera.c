@@ -4,21 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-static RGB ray_color(Ray ray, Hittable *world) {
-    Hit record;
-    if (world->hit(world, ray, (Interval) {0, INFINITY}, &record)) {
-        return (RGB) {
-            0.5*(record.normal.x + 1),
-            0.5*(record.normal.y + 1),
-            0.5*(record.normal.z + 1),
-        };
-    }
-    else {
-        double a = 0.5 * v3_unit(ray.direction).y + 0.5;
-        RGB light_blue = {0.5, 0.7, 1.0};
-        return rgb_blend(WHITE, light_blue, a);
-    }
-}
+#define TAU 6.283185307179586476
 
 static void init(Camera *camera) {
     camera->priv.aspect_ratio = (double) camera->image_width / camera->image_height;
@@ -45,6 +31,40 @@ static void init(Camera *camera) {
 
 static double random() {
     return rand() / (RAND_MAX + 1.0);
+}
+
+static double random_normal() {
+    return sqrt(-2.0 * log(random())) * cos(TAU * random());
+}
+
+static V3 random_normal_3d() {
+    return (V3) {random_normal(), random_normal(), random_normal()};
+}
+
+static V3 random_on_unit_sphere() {
+    return v3_unit(random_normal_3d());
+}
+
+static V3 random_on_hemisphere(V3 normal) {
+    V3 on_unit_sphere = random_on_unit_sphere();
+    return v3_dot(on_unit_sphere, normal) > 0 ? on_unit_sphere : v3_neg(on_unit_sphere);
+}
+
+static RGB ray_color(Ray ray, Hittable *world) {
+    Hit record;
+    if (world->hit(world, ray, (Interval) {0, INFINITY}, &record)) {
+        V3 direction = random_on_hemisphere(record.normal);
+        RGB reflection = ray_color(
+            (Ray) {.origin=record.point, direction=direction},
+            world
+        );
+        return rgb_scale(reflection, 0.5);
+    }
+    else {
+        double a = 0.5 * v3_unit(ray.direction).y + 0.5;
+        RGB light_blue = {0.5, 0.7, 1.0};
+        return rgb_blend(WHITE, light_blue, a);
+    }
 }
 
 static Ray get_ray(Camera *camera, size_t i, size_t j) {

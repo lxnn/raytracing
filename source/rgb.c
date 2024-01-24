@@ -20,3 +20,7 @@ RGB rgb_average(RGB *samples, size_t n) {
     }
     return (RGB) {sum.r / n, sum.g / n, sum.b / n};
 }
+
+RGB rgb_scale(RGB rgb, double s) {
+    return (RGB) {rgb.r*s, rgb.g*s, rgb.b*s};
+}
