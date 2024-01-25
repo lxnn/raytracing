@@ -19,6 +19,10 @@ int main() {
         .scatter=lambertian_scatter,
         .albedo={0.8, 0.8, 0.0},
     };
+    Lambertian diffuse_blue_ = {
+        .scatter=lambertian_scatter,
+        .albedo={0.1, 0.2, 0.5},
+    };
     Metal silver_ = {
         .scatter=metal_scatter,
         .albedo={0.8, 0.8, 0.8},
@@ -27,7 +31,7 @@ int main() {
     Metal gold_ = {
         .scatter=metal_scatter,
         .albedo={0.8, 0.6, 0.2},
-        .fuzz=1.0,
+        .fuzz=0.0,
     };
     Dielectric glass_ = {
         .scatter=dielectric_scatter,
@@ -36,14 +40,15 @@ int main() {
 
     Material *diffuse_grey = (Material *) &diffuse_grey_;
     Material *diffuse_yellow = (Material *) &diffuse_yellow_;
+    Material *diffuse_blue = (Material *) &diffuse_blue_;
     Material *silver = (Material *) &silver_;
     Material *gold = (Material *) &gold_;
     Material *glass = (Material *) &glass_;
 
     Sphere spheres[] = {
-        {.hit=sphere_hit, .material=glass, .center={0, 0, -1}, .radius=0.5},
         {.hit=sphere_hit, .material=diffuse_yellow, .center={0, -100.5, -1}, .radius=100},
         {.hit=sphere_hit, .material=glass, .center={-1, 0, -1}, .radius=0.5},
+        {.hit=sphere_hit, .material=diffuse_blue, .center={0, 0, -1}, .radius=0.5},
         {.hit=sphere_hit, .material=gold, .center={1, 0, -1}, .radius=0.5},
     };
     Hittable *objects[] = {

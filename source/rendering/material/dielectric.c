@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <math.h>
+#include <stdio.h>
 
 #include <util/random.h>
 
@@ -29,12 +30,23 @@ bool dielectric_scatter(
 
     *attenuation = (RGB) { 1, 1, 1 };
 
-    V3 unit_direction = v3_unit(record->ray_in.direction);
     double ir_ratio = record->front_face ? (1/dielectric->ir) : dielectric->ir;
-    V3 refracted = refract(unit_direction, record->normal, ir_ratio);
+
+    V3 unit_direction = v3_unit(record->ray_in.direction);
+    double cos_theta = -v3_dot(unit_direction, record->normal);
+    double sin_theta = sqrt(1 - cos_theta*cos_theta);
+    bool internally_reflected = ir_ratio*sin_theta > 1;
+
+    V3 new_direction;
+    if (internally_reflected) {
+        new_direction = v3_reflect(unit_direction, record->normal);
+    }
+    else {
+        new_direction = refract(unit_direction, record->normal, ir_ratio);
+    }
 
     scattered->origin = record->point;
-    scattered->direction = refracted;
+    scattered->direction = new_direction;
 
     return true;
 }
