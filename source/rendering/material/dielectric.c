@@ -3,7 +3,6 @@
 
 #include <assert.h>
 #include <math.h>
-#include <stdio.h>
 
 #include <util/random.h>
 
@@ -23,6 +22,12 @@ static V3 refract(V3 in, V3 normal, double ir_ratio) {
     return out;
 }
 
+static double schlick_reflectance(double cosine, double ref_idx) {
+    double r0 = (1-ref_idx) / (1+ref_idx);
+    r0 = r0 * r0;
+    return r0 + (1-r0)*pow((1-cosine), 5);
+}
+
 bool dielectric_scatter(
     const Material *material, const Hit *record, RGB *attenuation, Ray *scattered
 ) {
@@ -38,7 +43,7 @@ bool dielectric_scatter(
     bool internally_reflected = ir_ratio*sin_theta > 1;
 
     V3 new_direction;
-    if (internally_reflected) {
+    if (internally_reflected || random() < schlick_reflectance(cos_theta, ir_ratio)) {
         new_direction = v3_reflect(unit_direction, record->normal);
     }
     else {
