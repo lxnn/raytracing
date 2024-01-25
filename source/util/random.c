@@ -9,12 +9,20 @@ double random() {
     return rand() / (RAND_MAX + 1.0);
 }
 
+double randrange(double min, double max) {
+    return min + (max-min) * random();
+}
+
 double random_normal() {
     return sqrt(-2.0 * log(1 - random())) * cos(TAU * random());
 }
 
 V3 random_normal_3d() {
     return (V3) {random_normal(), random_normal(), random_normal()};
+}
+
+V3 randrange_3d(double min, double max) {
+    return (V3) {randrange(min, max), randrange(min, max), randrange(min, max)};
 }
 
 V3 random_on_unit_sphere() {

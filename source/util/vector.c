@@ -13,6 +13,7 @@ double v3_sum(V3 a) { return a.x + a.y + a.z; }
 double v3_dot(V3 a, V3 b) { return v3_sum(v3_mul(a, b)); }
 double v3_sqnorm(V3 a) { return v3_dot(a, a); }
 double v3_norm(V3 a) { return sqrt(v3_dot(a, a)); }
+double v3_dist(V3 a, V3 b) { return v3_norm(v3_sub(a, b)); }
 V3 v3_cross(V3 a, V3 b) {
     return (V3){a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x };
 }

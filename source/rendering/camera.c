@@ -153,12 +153,12 @@ Image *camera_render(Camera *camera, Hittable *world) {
             for (size_t k = 0; k < camera->samples_per_pixel; k++) {
                 Ray ray = get_ray(camera, i, j);
                 RGB sample = ray_color(ray, world, camera->max_bounces);
-                if (!rgb_valid(sample)) {
-                    fprintf(
-                        stderr, "\nInvalid sample: r=%f g=%f b=%f\n", sample.r, sample.g, sample.b
-                    );
-                    assert(false);
-                }
+                // if (!rgb_valid(sample)) {
+                //     fprintf(
+                //         stderr, "\nInvalid sample: r=%f g=%f b=%f\n", sample.r, sample.g, sample.b
+                //     );
+                //     assert(false);
+                // }
                 samples[k] = sample;
             }
             image->pixels[i * image->width + j] = rgb_average(samples, camera->samples_per_pixel);

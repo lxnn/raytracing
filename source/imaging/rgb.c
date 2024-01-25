@@ -42,3 +42,7 @@ bool rgb_valid(RGB rgb) {
 RGB rgb_linear_to_gamma(RGB rgb) {
     return (RGB) {sqrt(rgb.r), sqrt(rgb.g), sqrt(rgb.b)};
 }
+
+RGB rgb_from_v3(V3 v) {
+    return (RGB) {v.x, v.y, v.z};
+};

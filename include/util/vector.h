@@ -17,6 +17,7 @@ double v3_sum(V3 a);
 double v3_dot(V3 a, V3 b);
 double v3_sqnorm(V3 a);
 double v3_norm(V3 a);
+double v3_dist(V3 a, V3 b);
 V3 v3_cross(V3 a, V3 b);
 V3 v3_unit(V3 a);
 void v3_iadd(V3 *a, V3 b);
