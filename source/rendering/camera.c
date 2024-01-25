@@ -11,28 +11,71 @@
 #define TAU 6.283185307179586476
 #define RAD_PER_DEG (TAU/360.0)
 
+void camera_dump_config(FILE *file, Camera *camera) {
+    fprintf(
+        file,
+        "image_height=%llu image_width=%llu\n"
+        "center=(%f, %f, %f)\n"
+        "lookat=(%f, %f, %f)\n"
+        "up=(%f, %f, %f)\n"
+        "vfov=%f\n"
+        "samples_per_pixel=%llu\n"
+        "max_bounces=%llu\n"
+        "is_init=%d\n"
+        "aspect_ratio=%f\n"
+        "u=(%f, %f, %f) v=(%f, %f, %f) w=(%f, %f, %f)\n"
+        "focal_length=%f\n"
+        "viewport_height=%f viewport_width=%f\n"
+        "viewport_upper_left=(%f, %f, %f)\n"
+        "pixel_row_delta=(%f, %f, %f) pixel_col_delta=(%f, %f, %f)\n",
+        camera->image_height, camera->image_width,
+        camera->center.x, camera->center.y, camera->center.z,
+        camera->lookat.x, camera->lookat.y, camera->lookat.z,
+        camera->up.x, camera->up.y, camera->up.z,
+        camera->vfov,
+        camera->samples_per_pixel,
+        camera->max_bounces,
+        camera->priv.is_init,
+        camera->priv.aspect_ratio,
+        camera->priv.u.x, camera->priv.u.y, camera->priv.u.z,
+        camera->priv.v.x, camera->priv.v.y, camera->priv.v.z,
+        camera->priv.w.x, camera->priv.w.y, camera->priv.w.z,
+        camera->priv.focal_length,
+        camera->priv.viewport_height, camera->priv.viewport_width,
+        camera->priv.viewport_upper_left.x, camera->priv.viewport_upper_left.y, camera->priv.viewport_upper_left.z,
+        camera->priv.pixel_row_delta.x, camera->priv.pixel_row_delta.y, camera->priv.pixel_row_delta.z,
+        camera->priv.pixel_col_delta.x, camera->priv.pixel_col_delta.y, camera->priv.pixel_col_delta.z
+    );
+}
+
 static void init(Camera *camera) {
     camera->priv.aspect_ratio = (double) camera->image_width / camera->image_height;
-    camera->priv.viewport_height = 2 * camera->focal_length * tan(RAD_PER_DEG * camera->vfov / 2);
+    camera->priv.focal_length = v3_norm(v3_sub(camera->lookat, camera->center));
+    camera->priv.viewport_height = 2 * camera->priv.focal_length * tan(RAD_PER_DEG * camera->vfov / 2);
     camera->priv.viewport_width = camera->priv.viewport_height * camera->priv.aspect_ratio;
 
-    camera->priv.viewport_u = (V3) {camera->priv.viewport_width, 0, 0};
-    camera->priv.viewport_v = (V3) {0, -camera->priv.viewport_height, 0};
+    camera->priv.w = v3_unit(v3_sub(camera->center, camera->lookat));
+    camera->priv.u = v3_unit(v3_cross(camera->up, camera->priv.w));
+    camera->priv.v = v3_cross(camera->priv.w, camera->priv.u);
 
-    camera->priv.pixel_du = v3_scale(camera->priv.viewport_u, 1.0 / camera->image_width);
-    camera->priv.pixel_dv = v3_scale(camera->priv.viewport_v, 1.0 / camera->image_height);
-
-    camera->priv.viewport_center = v3_add(camera->center, (V3) {0, 0, -camera->focal_length});
-    camera->priv.viewport_upper_left = v3_sub(
-        camera->priv.viewport_center,
-        v3_scale(v3_add(camera->priv.viewport_u, camera->priv.viewport_v), 0.5)
+    camera->priv.pixel_row_delta = v3_scale(
+        camera->priv.v,
+        -1 * camera->priv.viewport_height / camera->image_height
     );
-    camera->priv.pixel_zero = v3_add(
-        camera->priv.viewport_upper_left,
-        v3_scale(v3_add(camera->priv.pixel_du, camera->priv.pixel_dv), 0.5)
+    camera->priv.pixel_col_delta = v3_scale(
+        camera->priv.u,
+        camera->priv.viewport_width / camera->image_width
+    );
+
+    camera->priv.viewport_upper_left = v3_add3(
+        camera->lookat,
+        v3_scale(camera->priv.u, -1 * camera->priv.viewport_width / 2),
+        v3_scale(camera->priv.v, camera->priv.viewport_height / 2)
     );
 
     camera->priv.is_init = true;
+
+    camera_dump_config(stderr, camera);
 }
 
 
@@ -60,22 +103,19 @@ static RGB ray_color(Ray ray, Hittable *world, size_t max_bounces) {
 }
 
 static Ray get_ray(Camera *camera, size_t i, size_t j) {
-    V3 pixel_corner_offset = v3_add(
-        v3_scale(camera->priv.pixel_du, (double) j),
-        v3_scale(camera->priv.pixel_dv, (double) i)
+    V3 pixel_corner = v3_add3(
+        camera->priv.viewport_upper_left,
+        v3_scale(camera->priv.pixel_col_delta, j + 0.5),
+        v3_scale(camera->priv.pixel_row_delta, i + 0.5)
     );
     V3 random_offset = v3_add(
-        v3_scale(camera->priv.pixel_du, random()),
-        v3_scale(camera->priv.pixel_dv, random())
+        v3_scale(camera->priv.pixel_col_delta, random()),
+        v3_scale(camera->priv.pixel_row_delta, random())
     );
-    V3 pixel_sample = v3_add3(
-        camera->priv.pixel_zero,
-        pixel_corner_offset,
-        random_offset
-    );
+    V3 sample_point = v3_add(pixel_corner, random_offset);
     return (Ray) {
         .origin = camera->center,
-        .direction = v3_sub(pixel_sample, camera->center),
+        .direction = v3_sub(sample_point, camera->center),
     };
 }
 

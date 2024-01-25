@@ -19,23 +19,29 @@ int main() {
         .scatter=lambertian_scatter,
         .albedo={0, 0, 1},
     };
+    Lambertian diffuse_grey_ = {
+        .scatter=lambertian_scatter,
+        .albedo={0.5, 0.5, 0.5},
+    };
 
     Material *diffuse_red = (Material *) &diffuse_red_;
     Material *diffuse_blue = (Material *) &diffuse_blue_;
+    Material *diffuse_grey = (Material *) &diffuse_grey_;
 
-    double r = 0.70711;
-    Sphere blue_ball = {.hit=sphere_hit, .material=diffuse_blue, .center={-r, 0, -1}, .radius=r};
-    Sphere red_ball = {.hit=sphere_hit, .material=diffuse_red, .center={+r, 0, -1}, .radius=r};
+    Sphere blue_ball = {.hit=sphere_hit, .material=diffuse_blue, .center={-1, 1, -1}, .radius=1};
+    Sphere red_ball = {.hit=sphere_hit, .material=diffuse_red, .center={+1, 1, -1}, .radius=1};
+    Sphere ground = {.hit=sphere_hit, .material=diffuse_grey, .center={0, -500, -1}, .radius=500};
 
-    Hittable *objects[] = {(Hittable *) &red_ball, (Hittable *) &blue_ball};
-    List object_list = {.hit=list_hit, .objects=objects, .count=2};
+    Hittable *objects[] = {(Hittable *) &red_ball, (Hittable *) &blue_ball, (Hittable *) &ground};
+    List object_list = {.hit=list_hit, .objects=objects, .count=3};
     Hittable *world = (Hittable *) &object_list;
 
     Camera camera = {
         .image_height = 450,
         .image_width = 800,
-        .center = {0, 0, 0},
-        .focal_length = 1.0,
+        .center = {3, 1, 2},
+        .lookat = {0, 1, -1},
+        .up = {1, 1, 0},
         .vfov = 90,
         .samples_per_pixel = 100,
         .max_bounces = 50,
