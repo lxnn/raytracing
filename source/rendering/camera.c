@@ -1,12 +1,12 @@
-#include "camera.h"
+#include <rendering/camera.h>
 
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 
-#include "random.h"
-#include "material.h"
+#include <rendering/material/material.h>
+#include <util/random.h>
 
 
 static void init(Camera *camera) {

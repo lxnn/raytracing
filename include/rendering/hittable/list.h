@@ -2,7 +2,6 @@
 #define LIST_H
 
 #include "hittable.h"
-#include "interval.h"
 
 typedef struct List List;
 

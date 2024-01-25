@@ -1,6 +1,4 @@
-#include "metal.h"
-
-#include "hittable.h"
+#include <rendering/material/metal.h>
 
 bool metal_scatter(
     const Material *material, const Hit *record, RGB *attenuation, Ray *scattered

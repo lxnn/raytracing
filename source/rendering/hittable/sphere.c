@@ -1,8 +1,7 @@
-#include "sphere.h"
+#include <rendering/hittable/sphere.h>
 
 #include <stdbool.h>
 #include <math.h>
-#include "ray.h"
 
 bool sphere_hit(Hittable *self, Ray r, Interval in, Hit *record) {
     Sphere *s = (Sphere *) self;

@@ -1,7 +1,7 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include "rgb.h"
+#include <imaging/rgb.h>
 
 typedef struct Image Image;
 struct Image {

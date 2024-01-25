@@ -1,9 +1,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "hittable.h"
-#include "vector.h"
-#include "image.h"
+#include <rendering/hittable/hittable.h>
+#include <imaging/image.h>
 
 typedef struct Camera Camera;
 struct Camera {

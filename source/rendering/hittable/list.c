@@ -1,4 +1,4 @@
-#include "list.h"
+#include <rendering/hittable/list.h>
 
 bool list_hit(Hittable *self, Ray r, Interval in, Hit *record) {
     List *list = (List *) self;

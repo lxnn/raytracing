@@ -1,18 +1,12 @@
 
-#include <assert.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <math.h>
+#include <imaging/ppm.h>
+#include <rendering/camera.h>
 
-#include "vector.h"
-#include "ppm.h"
-#include "ray.h"
-#include "hittable.h"
-#include "sphere.h"
-#include "list.h"
-#include "camera.h"
-#include "lambertian.h"
-#include "metal.h"
+#include <rendering/hittable/sphere.h>
+#include <rendering/hittable/list.h>
+
+#include <rendering/material/lambertian.h>
+#include <rendering/material/metal.h>
 
 
 int main() {
@@ -56,7 +50,7 @@ int main() {
     Camera camera = {
         .image_height = 450,
         .image_width = 800,
-        .center = (V3) {0, 0, 0},
+        .center = {0, 0, 0},
         .focal_length = 1.0,
         .viewport_height = 2.0,
         .samples_per_pixel = 100,

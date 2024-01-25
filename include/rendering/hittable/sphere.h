@@ -2,8 +2,6 @@
 #define SPHERE_H
 
 #include "hittable.h"
-#include "vector.h"
-#include "interval.h"
 
 typedef struct Sphere Sphere;
 struct Sphere {

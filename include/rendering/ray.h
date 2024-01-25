@@ -1,7 +1,7 @@
 #ifndef RAY_H
 #define RAY_H
 
-#include "vector.h"
+#include <util/vector.h>
 
 typedef struct Ray Ray;
 struct Ray {V3 origin; V3 direction;};

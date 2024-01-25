@@ -1,4 +1,4 @@
-#include "interval.h"
+#include <util/interval.h>
 
 bool interval_contains(Interval interval, double value) {
     return value >= interval.min && value <= interval.max;

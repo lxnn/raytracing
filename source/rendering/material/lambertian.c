@@ -1,7 +1,6 @@
-#include "lambertian.h"
+#include <rendering/material/lambertian.h>
 
-#include "hittable.h"
-#include "random.h"
+#include <util/random.h>
 
 bool lambertian_scatter(
     const Material *material, const Hit *record, RGB *attenuation, Ray *scattered

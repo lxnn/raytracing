@@ -2,9 +2,9 @@
 #define HITTABLE_H
 
 #include <stdbool.h>
-#include "vector.h"
-#include "ray.h"
-#include "interval.h"
+
+#include <util/interval.h>
+#include <rendering/ray.h>
 
 typedef struct Material Material;
 

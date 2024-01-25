@@ -2,8 +2,8 @@
 #define PPM_H
 
 #include <stdio.h>
-#include "rgb.h"
-#include "image.h"
+
+#include <imaging/image.h>
 
 void write_ppm(FILE *file, Image *image);
 

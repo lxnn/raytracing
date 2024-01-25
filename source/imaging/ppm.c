@@ -1,4 +1,4 @@
-#include "ppm.h"
+#include <imaging/ppm.h>
 
 #include <math.h>
 #include <assert.h>

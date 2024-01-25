@@ -1,4 +1,5 @@
-#include "vector.h"
+#include <util/vector.h>
+
 #include <math.h>
 
 V3 v3_add(V3 a, V3 b) { return (V3){a.x+b.x, a.y+b.y, a.z+b.z}; }

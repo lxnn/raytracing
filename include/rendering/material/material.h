@@ -2,10 +2,10 @@
 #define MATERIAL_H
 
 #include <stdbool.h>
-#include "rgb.h"
-#include "ray.h"
 
-typedef struct Hit Hit;
+#include <imaging/rgb.h>
+#include <rendering/ray.h>
+#include <rendering/hittable/hittable.h>
 
 typedef struct Material Material;
 struct Material {
