@@ -21,3 +21,7 @@ void v3_isub(V3 *a, V3 b) { a->x -= b.x; a->y -= b.y; a->z -= b.z;}
 void v3_imul(V3 *a, V3 b) { a->x *= b.x; a->y *= b.y; a->z *= b.z;}
 void v3_iscale(V3 *a, double s) { a->x *= s; a->y *= s; a->z *= s; }
 void v3_ineg(V3 *a) { a->x *= -1; a->y *= -1, a->z *= -1; }
+bool v3_near_zero(V3 a) {
+    static const double eps = 1e-8;
+    return fabs(a.x) < eps && fabs(a.y) < eps && fabs(a.z) < eps;
+}

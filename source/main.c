@@ -11,12 +11,18 @@
 #include "sphere.h"
 #include "list.h"
 #include "camera.h"
+#include "lambertian.h"
 
 
 int main() {
+    Lambertian lambertian_grey = {
+        .scatter=lambertian_scatter,
+        .albedo={0.5, 0.5, 0.5}
+    };
+    Material *diffuse_grey = (Material *) &lambertian_grey;
     Sphere spheres[] = {
-        {.hit=sphere_hit, .center={0, 0, -1}, .radius=0.5},
-        {.hit=sphere_hit, .center={0, -100.5, -1}, .radius=100},
+        {.hit=sphere_hit, .material=diffuse_grey, .center={0, 0, -1}, .radius=0.5},
+        {.hit=sphere_hit, .material=diffuse_grey, .center={0, -100.5, -1}, .radius=100},
     };
     Hittable *objects[] = {
         (Hittable *) &spheres[0],

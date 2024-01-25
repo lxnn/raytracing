@@ -27,6 +27,10 @@ RGB rgb_scale(RGB rgb, double s) {
     return (RGB) {rgb.r*s, rgb.g*s, rgb.b*s};
 }
 
+RGB rgb_mul(RGB a, RGB b) {
+    return (RGB) {a.r*b.r, a.g*b.g, a.b*b.b};
+}
+
 bool rgb_valid(RGB rgb) {
     return (
             rgb.r >= 0 && rgb.r <= 1

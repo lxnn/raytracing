@@ -29,5 +29,7 @@ bool sphere_hit(Hittable *self, Ray r, Interval in, Hit *record) {
     record->front_face = v3_dot(r.direction, front_normal) < 0;
     record->normal = record->front_face? front_normal : v3_neg(front_normal);
 
+    record->material = self->material;
+
     return true;
 }

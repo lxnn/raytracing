@@ -6,6 +6,7 @@
 #include <assert.h>
 
 #include "random.h"
+#include "material.h"
 
 
 static void init(Camera *camera) {
@@ -38,11 +39,15 @@ static RGB ray_color(Ray ray, Hittable *world, size_t max_bounces) {
         return (RGB) {0, 0, 0};
     }
     else if (world->hit(world, ray, (Interval) {0.001, INFINITY}, &record)) {
-        V3 new_direction = v3_add(record.normal, random_on_unit_sphere());
-        assert(v3_sqnorm(new_direction) > 0.0);
-        Ray reflected_ray = (Ray) {.origin=record.point, .direction=new_direction};
-        RGB color = ray_color(reflected_ray, world, max_bounces - 1);
-        return rgb_scale(color, 0.5);
+        RGB attenuation;
+        Ray scattered_ray;
+        if (record.material->scatter(record.material, &record, &attenuation, &scattered_ray))
+            return rgb_mul(
+                ray_color(scattered_ray, world, max_bounces - 1),
+                attenuation
+            );
+        else
+            return (RGB) {0, 0, 0};
     }
     else {
         double a = 0.5 * v3_unit(ray.direction).y + 0.5;
