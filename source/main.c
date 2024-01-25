@@ -7,6 +7,7 @@
 
 #include <rendering/material/lambertian.h>
 #include <rendering/material/metal.h>
+#include <rendering/material/dielectric.h>
 
 
 int main() {
@@ -28,16 +29,21 @@ int main() {
         .albedo={0.8, 0.6, 0.2},
         .fuzz=1.0,
     };
+    Dielectric glass_ = {
+        .scatter=dielectric_scatter,
+        .ir=1.5,
+    };
 
     Material *diffuse_grey = (Material *) &diffuse_grey_;
     Material *diffuse_yellow = (Material *) &diffuse_yellow_;
     Material *silver = (Material *) &silver_;
     Material *gold = (Material *) &gold_;
+    Material *glass = (Material *) &glass_;
 
     Sphere spheres[] = {
-        {.hit=sphere_hit, .material=diffuse_grey, .center={0, 0, -1}, .radius=0.5},
+        {.hit=sphere_hit, .material=glass, .center={0, 0, -1}, .radius=0.5},
         {.hit=sphere_hit, .material=diffuse_yellow, .center={0, -100.5, -1}, .radius=100},
-        {.hit=sphere_hit, .material=silver, .center={-1, 0, -1}, .radius=0.5},
+        {.hit=sphere_hit, .material=glass, .center={-1, 0, -1}, .radius=0.5},
         {.hit=sphere_hit, .material=gold, .center={1, 0, -1}, .radius=0.5},
     };
     Hittable *objects[] = {

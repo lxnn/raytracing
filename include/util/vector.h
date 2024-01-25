@@ -24,7 +24,10 @@ void v3_isub(V3 *a, V3 b);
 void v3_imul(V3 *a, V3 b);
 void v3_iscale(V3 *a, double s);
 void v3_ineg(V3 *a);
+bool v3_almost_equal(V3 a, V3 b);
 bool v3_near_zero(V3 a);
+bool v3_isunit(V3 a);
+bool v3_contains_nan(V3 a);
 V3 v3_reflect(V3 a, V3 n);
 
 #endif // VECTOR_H

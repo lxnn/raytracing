@@ -22,10 +22,15 @@ void v3_isub(V3 *a, V3 b) { a->x -= b.x; a->y -= b.y; a->z -= b.z;}
 void v3_imul(V3 *a, V3 b) { a->x *= b.x; a->y *= b.y; a->z *= b.z;}
 void v3_iscale(V3 *a, double s) { a->x *= s; a->y *= s; a->z *= s; }
 void v3_ineg(V3 *a) { a->x *= -1; a->y *= -1, a->z *= -1; }
-bool v3_near_zero(V3 a) {
+bool v3_almost_equal(V3 a, V3 b) {
     static const double eps = 1e-8;
-    return fabs(a.x) < eps && fabs(a.y) < eps && fabs(a.z) < eps;
+    return fabs(a.x - b.x) < eps && fabs(a.y - b.y) < eps && fabs(a.z - b.z) < eps;
 }
+bool v3_near_zero(V3 a) { return v3_almost_equal(a, (V3) {0, 0, 0}); }
+bool v3_isunit(V3 a) {
+    return fabs(v3_sqnorm(a) - 1) < 1e-10;
+}
+bool v3_contains_nan(V3 a) { return isnan(a.x) || isnan(a.y) || isnan(a.z); }
 V3 v3_reflect(V3 a, V3 n) {
     return v3_sub(a, v3_scale(n, 2*v3_dot(a, n)));
 }
