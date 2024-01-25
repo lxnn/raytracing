@@ -15,6 +15,7 @@ struct Hit {
     double time;
     bool front_face;
     Material *material;
+    Ray ray_in;
 };
 
 typedef struct Hittable Hittable;

@@ -25,3 +25,6 @@ bool v3_near_zero(V3 a) {
     static const double eps = 1e-8;
     return fabs(a.x) < eps && fabs(a.y) < eps && fabs(a.z) < eps;
 }
+V3 v3_reflect(V3 a, V3 n) {
+    return v3_sub(a, v3_scale(n, 2*v3_dot(a, n)));
+}

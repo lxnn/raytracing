@@ -25,5 +25,6 @@ void v3_imul(V3 *a, V3 b);
 void v3_iscale(V3 *a, double s);
 void v3_ineg(V3 *a);
 bool v3_near_zero(V3 a);
+V3 v3_reflect(V3 a, V3 n);
 
 #endif // VECTOR_H
