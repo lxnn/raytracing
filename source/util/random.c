@@ -25,3 +25,11 @@ V3 random_on_hemisphere(V3 normal) {
     V3 on_unit_sphere = random_on_unit_sphere();
     return v3_dot(on_unit_sphere, normal) > 0 ? on_unit_sphere : v3_neg(on_unit_sphere);
 }
+
+V3 random_on_unit_disk() {
+    V3 v;
+    do {
+        v = (V3) {2*random() - 1, 2*random() - 1, 0};
+    } while (v3_sqnorm(v) > 1);
+    return v;
+}

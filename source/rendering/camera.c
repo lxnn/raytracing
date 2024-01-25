@@ -21,13 +21,15 @@ void camera_dump_config(FILE *file, Camera *camera) {
         "vfov=%f\n"
         "samples_per_pixel=%llu\n"
         "max_bounces=%llu\n"
+        "defocus_angle=%f\n"
+        "focus_dist=%f\n"
         "is_init=%d\n"
         "aspect_ratio=%f\n"
         "u=(%f, %f, %f) v=(%f, %f, %f) w=(%f, %f, %f)\n"
-        "focal_length=%f\n"
         "viewport_height=%f viewport_width=%f\n"
         "viewport_upper_left=(%f, %f, %f)\n"
-        "pixel_row_delta=(%f, %f, %f) pixel_col_delta=(%f, %f, %f)\n",
+        "pixel_row_delta=(%f, %f, %f) pixel_col_delta=(%f, %f, %f)\n"
+        "defocus_disk_u=(%f, %f, %f) defocus_disk_v=(%f, %f, %f)\n",
         camera->image_height, camera->image_width,
         camera->center.x, camera->center.y, camera->center.z,
         camera->lookat.x, camera->lookat.y, camera->lookat.z,
@@ -35,23 +37,25 @@ void camera_dump_config(FILE *file, Camera *camera) {
         camera->vfov,
         camera->samples_per_pixel,
         camera->max_bounces,
+        camera->defocus_angle,
+        camera->focus_dist,
         camera->priv.is_init,
         camera->priv.aspect_ratio,
         camera->priv.u.x, camera->priv.u.y, camera->priv.u.z,
         camera->priv.v.x, camera->priv.v.y, camera->priv.v.z,
         camera->priv.w.x, camera->priv.w.y, camera->priv.w.z,
-        camera->priv.focal_length,
         camera->priv.viewport_height, camera->priv.viewport_width,
         camera->priv.viewport_upper_left.x, camera->priv.viewport_upper_left.y, camera->priv.viewport_upper_left.z,
         camera->priv.pixel_row_delta.x, camera->priv.pixel_row_delta.y, camera->priv.pixel_row_delta.z,
-        camera->priv.pixel_col_delta.x, camera->priv.pixel_col_delta.y, camera->priv.pixel_col_delta.z
+        camera->priv.pixel_col_delta.x, camera->priv.pixel_col_delta.y, camera->priv.pixel_col_delta.z,
+        camera->priv.defocus_disk_u.x, camera->priv.defocus_disk_u.y, camera->priv.defocus_disk_u.z,
+        camera->priv.defocus_disk_v.x, camera->priv.defocus_disk_v.y, camera->priv.defocus_disk_v.z
     );
 }
 
 static void init(Camera *camera) {
     camera->priv.aspect_ratio = (double) camera->image_width / camera->image_height;
-    camera->priv.focal_length = v3_norm(v3_sub(camera->lookat, camera->center));
-    camera->priv.viewport_height = 2 * camera->priv.focal_length * tan(RAD_PER_DEG * camera->vfov / 2);
+    camera->priv.viewport_height = 2 * camera->focus_dist * tan(RAD_PER_DEG * camera->vfov / 2);
     camera->priv.viewport_width = camera->priv.viewport_height * camera->priv.aspect_ratio;
 
     camera->priv.w = v3_unit(v3_sub(camera->center, camera->lookat));
@@ -67,15 +71,18 @@ static void init(Camera *camera) {
         camera->priv.viewport_width / camera->image_width
     );
 
-    camera->priv.viewport_upper_left = v3_add3(
-        camera->lookat,
+    camera->priv.viewport_upper_left = v3_add4(
+        camera->center,
+        v3_scale(camera->priv.w, -1 * camera->focus_dist),
         v3_scale(camera->priv.u, -1 * camera->priv.viewport_width / 2),
         v3_scale(camera->priv.v, camera->priv.viewport_height / 2)
     );
 
-    camera->priv.is_init = true;
+    double defocus_radius = camera->focus_dist * tan(RAD_PER_DEG * camera->defocus_angle / 2);
+    camera->priv.defocus_disk_u = v3_scale(camera->priv.u, defocus_radius);
+    camera->priv.defocus_disk_v = v3_scale(camera->priv.v, defocus_radius);
 
-    camera_dump_config(stderr, camera);
+    camera->priv.is_init = true;
 }
 
 
@@ -102,6 +109,15 @@ static RGB ray_color(Ray ray, Hittable *world, size_t max_bounces) {
     }
 }
 
+static V3 defocus_disk_sample(Camera *camera) {
+    V3 p = random_on_unit_disk();
+    return v3_add3(
+        camera->center,
+        v3_scale(camera->priv.defocus_disk_u, p.x),
+        v3_scale(camera->priv.defocus_disk_v, p.y)
+    );
+}
+
 static Ray get_ray(Camera *camera, size_t i, size_t j) {
     V3 pixel_corner = v3_add3(
         camera->priv.viewport_upper_left,
@@ -113,9 +129,10 @@ static Ray get_ray(Camera *camera, size_t i, size_t j) {
         v3_scale(camera->priv.pixel_row_delta, random())
     );
     V3 sample_point = v3_add(pixel_corner, random_offset);
+    V3 ray_origin = camera->defocus_angle <= 0 ? camera->center : defocus_disk_sample(camera);
     return (Ray) {
-        .origin = camera->center,
-        .direction = v3_sub(sample_point, camera->center),
+        .origin = ray_origin,
+        .direction = v3_sub(sample_point, ray_origin),
     };
 }
 

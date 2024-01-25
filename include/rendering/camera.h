@@ -15,15 +15,17 @@ struct Camera {
     double vfov;
     size_t samples_per_pixel;
     size_t max_bounces;
+    double defocus_angle;
+    double focus_dist;
 
     struct {
         bool is_init;
         double aspect_ratio;
         V3 u, v, w; // Camera coordinate system
-        double focal_length;
         double viewport_height, viewport_width;
         V3 viewport_upper_left;
         V3 pixel_row_delta, pixel_col_delta;
+        V3 defocus_disk_u, defocus_disk_v;
     } priv;
 };
 
