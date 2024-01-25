@@ -10,13 +10,14 @@ struct Camera {
     size_t image_width;
     V3 center;
     double focal_length;
-    double viewport_height;
+    double vfov;
     size_t samples_per_pixel;
     size_t max_bounces;
 
     struct {
         bool is_init;
         double aspect_ratio;
+        double viewport_height;
         double viewport_width;
         V3 viewport_upper_left;
         V3 viewport_u;

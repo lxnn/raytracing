@@ -8,13 +8,16 @@
 #include <rendering/material/material.h>
 #include <util/random.h>
 
+#define TAU 6.283185307179586476
+#define RAD_PER_DEG (TAU/360.0)
 
 static void init(Camera *camera) {
     camera->priv.aspect_ratio = (double) camera->image_width / camera->image_height;
-    camera->priv.viewport_width = camera->viewport_height * camera->priv.aspect_ratio;
+    camera->priv.viewport_height = 2 * camera->focal_length * tan(RAD_PER_DEG * camera->vfov / 2);
+    camera->priv.viewport_width = camera->priv.viewport_height * camera->priv.aspect_ratio;
 
     camera->priv.viewport_u = (V3) {camera->priv.viewport_width, 0, 0};
-    camera->priv.viewport_v = (V3) {0, -camera->viewport_height, 0};
+    camera->priv.viewport_v = (V3) {0, -camera->priv.viewport_height, 0};
 
     camera->priv.pixel_du = v3_scale(camera->priv.viewport_u, 1.0 / camera->image_width);
     camera->priv.pixel_dv = v3_scale(camera->priv.viewport_v, 1.0 / camera->image_height);
