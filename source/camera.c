@@ -5,7 +5,8 @@
 #include <stdio.h>
 #include <assert.h>
 
-#define TAU 6.283185307179586476
+#include "random.h"
+
 
 static void init(Camera *camera) {
     camera->priv.aspect_ratio = (double) camera->image_width / camera->image_height;
@@ -30,26 +31,6 @@ static void init(Camera *camera) {
     camera->priv.is_init = true;
 }
 
-static double random() {
-    return rand() / (RAND_MAX + 1.0);
-}
-
-static double random_normal() {
-    return sqrt(-2.0 * log(1 - random())) * cos(TAU * random());
-}
-
-static V3 random_normal_3d() {
-    return (V3) {random_normal(), random_normal(), random_normal()};
-}
-
-static V3 random_on_unit_sphere() {
-    return v3_unit(random_normal_3d());
-}
-
-static V3 random_on_hemisphere(V3 normal) {
-    V3 on_unit_sphere = random_on_unit_sphere();
-    return v3_dot(on_unit_sphere, normal) > 0 ? on_unit_sphere : v3_neg(on_unit_sphere);
-}
 
 static RGB ray_color(Ray ray, Hittable *world, size_t max_bounces) {
     Hit record;
