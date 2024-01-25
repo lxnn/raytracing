@@ -21,10 +21,12 @@ int main() {
     Metal silver_ = {
         .scatter=metal_scatter,
         .albedo={0.8, 0.8, 0.8},
+        .fuzz=0.3,
     };
     Metal gold_ = {
         .scatter=metal_scatter,
         .albedo={0.8, 0.6, 0.2},
+        .fuzz=1.0,
     };
 
     Material *diffuse_grey = (Material *) &diffuse_grey_;

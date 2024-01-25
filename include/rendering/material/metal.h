@@ -8,6 +8,7 @@ typedef struct Metal Metal;
 struct Metal {
     struct Material;
     RGB albedo;
+    double fuzz;
 };
 
 bool metal_scatter(
